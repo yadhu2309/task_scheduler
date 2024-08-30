@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'tasks',
 
     'rest_framework',
-    'mongoengine',
+    "debug_toolbar",
+
+    # 'mongoengine',
 
 
 ]
@@ -55,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+
 ]
 
 ROOT_URLCONF = 'task_scheduler.urls'
@@ -89,13 +93,13 @@ DATABASES = {
 }
 
 # MongoDB Configuration
-from mongoengine import connect
+# from mongoengine import connect
 
-connect(
-    db='demodb',  
-    host='localhost',
-    port=27017
-)
+# connect(
+#     db='demodb',  
+#     host='localhost',
+#     port=27017
+# )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -139,3 +143,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# django toolbar 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
