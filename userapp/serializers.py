@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from django.contrib.auth import authenticate
+
 from .models import User
 from tasks.serializers import TaskSerializer
 
@@ -15,8 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "name", "email", "password", "confirm_password", 'tasks']
-        read_only_fields = ['id']
+        fields = ["id", "name", "email", "password", "confirm_password", "tasks"]
+        read_only_fields = ["id"]
 
     def validate(self, attrs):
         """Check the passwords match"""
@@ -40,7 +42,13 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-# class UserTaskSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = '__all__'
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def check_user(self, data):
+        """Check if user exists and password is correct"""
+        user = authenticate(email=data['email'], password=data['password'])
+        if not user:
+            raise serializers.ValidationError({'detail': 'Invalid email or password.'})
+        return user
