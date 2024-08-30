@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import User
+from tasks.serializers import TaskSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,10 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
         write_only=True, required=True, style={"input_type": "password"}
     )
+    tasks = TaskSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ["email", "password", "confirm_password"]
+        fields = ["id", "email", "password", "confirm_password", 'tasks']
+        read_only_fields = ['id']
 
     def validate(self, attrs):
         """Check the passwords match"""
@@ -35,3 +38,9 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
 
         return user
+
+
+# class UserTaskSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = '__all__'
