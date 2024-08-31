@@ -20,6 +20,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=200)
+    otp = models.CharField(max_length=6, default=None, null=True)
 
     USERNAME_FIELD = 'email'
 

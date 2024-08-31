@@ -1,12 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login, logout
 
-from .serializers import UserSerializer, UserLoginSerializer
+from .serializers import UserSerializer, UserLoginSerializer, UserOtpLoginSerializer, UserSendOtpSerializer
 from .models import User
 
 # Create your views here.
@@ -44,7 +44,19 @@ class UserTaskList(APIView):
         return Response(serializer.data, status=200)
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        # 'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
 class UserLogin(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         """
         Authenticate the user and login
@@ -52,18 +64,57 @@ class UserLogin(APIView):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.check_user(request.data)
-            login(request, user)
-            return Response({"detail": "Login successful."}, status=200)
+            token = get_tokens_for_user(user)
+            # payload = {
+            #     'id': user.id,
+            #     'exp': datetime.datetime.now()+datetime.timedelta(minutes=60),
+            #     'iat': datetime.datetime.now()
+            # }
+            # token = jwt.encode(payload, 'secret', algorithm='HS256')
+            # # response = Response()
+            # response.set_cookie(key='token', value=token, httponly=True)
+            # response.data={
+            #     'message': 'Login successfully'
+            # }
+            # login(request, user)
+            return Response(token, status=200)
+        return Response(serializer.errors, status=400)
+
+
+class UserOtpLogin(APIView):
+
+    def post(self, request):
+        """
+        Authenticate the user by verifying the provided OTP.
+        """
+        serializer = UserOtpLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.verify_otp(request.data)
+            # login(request, user)
+            token = get_tokens_for_user(user)
+            # return Response({"message": "Login successful."}, status=200)
+            return Response(token, status=200)
+
+        return Response(serializer.errors, status=400)
+    
+class SendEmail(APIView):
+    def post(self, request):
+        serializer = UserSendOtpSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.send_otp(request.data)
+            return Response({"message": "Email sended successfully."}, status=200)
+        # print(serializer.errors)
         return Response(serializer.errors, status=400)
 
 
 class UserLogout(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
-    
+
     def post(self, request):
         """
         Logout user and clear the
         """
         logout(request)
-        return Response({"detail": "Logout successful."}, status=200)
+        return Response({"message": "Logout successful."}, status=200)
+    
+

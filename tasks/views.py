@@ -1,23 +1,25 @@
 # from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from django.shortcuts import get_object_or_404
 
 from tasks.models import Tasks
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer, TaskListSerializer
 
 # Create your views here.
 
 
 class TaskView(APIView):
+    permission_classes=[IsAuthenticated]
 
     def get(self, request):
         """
         List all Tasks
         """
         tasks = Tasks.objects.all()
-        serializer = TaskSerializer(tasks, many=True)
+        serializer = TaskListSerializer(tasks, many=True)
         return Response(serializer.data, status=200)
 
     def post(self, request):
@@ -38,7 +40,7 @@ class TaskUpdateDeleteRetrive(APIView):
         Retrive single task
         """
         task = get_object_or_404(Tasks, pk=pk)
-        serializer = TaskSerializer(task)
+        serializer = TaskListSerializer(task)
         return Response(serializer.data, status=200)
 
     def patch(self, request, pk):
