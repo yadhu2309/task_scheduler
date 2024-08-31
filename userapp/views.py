@@ -13,6 +13,7 @@ from .models import User
 
 
 class UserRegisterView(APIView):
+    permission_classes = [AllowAny]
 
     def get(self, request):
         """

@@ -16,9 +16,9 @@ class TaskView(APIView):
 
     def get(self, request):
         """
-        List all Tasks
+        List all Tasks of authenticated user
         """
-        tasks = Tasks.objects.all()
+        tasks = Tasks.objects.filter(user=request.user)
         serializer = TaskListSerializer(tasks, many=True)
         return Response(serializer.data, status=200)
 
@@ -26,7 +26,7 @@ class TaskView(APIView):
         """
         Create a task
         """
-        serializer = TaskSerializer(data=request.data)
+        serializer = TaskSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
@@ -34,6 +34,7 @@ class TaskView(APIView):
 
 
 class TaskUpdateDeleteRetrive(APIView):
+    permission_classes=[AllowAny]
 
     def get(self, request, pk):
         """
