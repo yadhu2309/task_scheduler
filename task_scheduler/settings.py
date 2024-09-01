@@ -100,7 +100,7 @@ WSGI_APPLICATION = 'task_scheduler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'events',
         'USER': 'admin',
 
