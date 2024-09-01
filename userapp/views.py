@@ -35,6 +35,7 @@ class UserRegisterView(APIView):
 
 
 class UserTaskList(APIView):
+    permission_classes = [AllowAny]
 
     def get(self, request, pk):
         """
@@ -45,13 +46,13 @@ class UserTaskList(APIView):
         return Response(serializer.data, status=200)
 
 
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
     return {
-        # 'refresh': str(refresh),
+        'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
 
@@ -83,6 +84,7 @@ class UserLogin(APIView):
 
 
 class UserOtpLogin(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         """
@@ -99,6 +101,8 @@ class UserOtpLogin(APIView):
         return Response(serializer.errors, status=400)
     
 class SendEmail(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = UserSendOtpSerializer(data=request.data)
         if serializer.is_valid():
@@ -107,15 +111,20 @@ class SendEmail(APIView):
         # print(serializer.errors)
         return Response(serializer.errors, status=400)
 
-
 class UserLogout(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         """
-        Logout user and clear the
+        Logout user
         """
-        logout(request)
-        return Response({"message": "Logout successful."}, status=200)
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Logout successful."}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
     
 

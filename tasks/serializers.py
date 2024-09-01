@@ -26,7 +26,6 @@ class TaskListSerializer(serializers.ModelSerializer):
     def get_start(self, obj):
         try:
             date_string = f'{obj.date} {obj.start}'
-            print(date_string)
             date_format = "%Y-%m-%d %H:%M:%S"
             date_object = datetime.strptime(date_string, date_format)
             return date_object

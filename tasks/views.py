@@ -19,6 +19,8 @@ class TaskView(APIView):
         List all Tasks of authenticated user
         """
         tasks = Tasks.objects.filter(user=request.user)
+        # tasks = Tasks.objects.all()
+
         serializer = TaskListSerializer(tasks, many=True)
         return Response(serializer.data, status=200)
 
@@ -34,13 +36,13 @@ class TaskView(APIView):
 
 
 class TaskUpdateDeleteRetrive(APIView):
-    permission_classes=[AllowAny]
+    permission_classes=[IsAuthenticated]
 
     def get(self, request, pk):
         """
         Retrive single task
         """
-        task = get_object_or_404(Tasks, pk=pk)
+        task = get_object_or_404(Tasks, pk=pk, user=request.user)
         serializer = TaskListSerializer(task)
         return Response(serializer.data, status=200)
 
@@ -48,7 +50,7 @@ class TaskUpdateDeleteRetrive(APIView):
         """
         Update task partially
         """
-        task = get_object_or_404(Tasks, pk=pk)
+        task = get_object_or_404(Tasks, pk=pk, user=request.user)
         serializer = TaskSerializer(task, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -59,7 +61,7 @@ class TaskUpdateDeleteRetrive(APIView):
         """
         Update task completely
         """
-        task = get_object_or_404(Tasks, pk=pk)
+        task = get_object_or_404(Tasks, pk=pk, user=request.user)
         serializer = TaskSerializer(task, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -70,6 +72,6 @@ class TaskUpdateDeleteRetrive(APIView):
         """
         Delete task
         """
-        task = get_object_or_404(Tasks, pk=pk)
+        task = get_object_or_404(Tasks, pk=pk, user=request.user)
         task.delete()
         return Response({"message": "Task deleted successfully"}, status=204)
