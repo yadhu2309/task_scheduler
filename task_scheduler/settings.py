@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'tasks',
 
     'rest_framework',
-    "debug_toolbar",
+    # "debug_toolbar",
     "corsheaders",
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',  # For blacklisting tokens
