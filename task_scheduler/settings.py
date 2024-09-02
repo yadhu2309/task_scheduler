@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2(*8zs*l($%9zd54f6f+^*tp3dpf0efygh%d#-sr9wib+!d$mp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -100,15 +100,8 @@ WSGI_APPLICATION = 'task_scheduler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'events',
-        'USER': 'admin',
-
-        'PASSWORD': 'admin',
-
-        'HOST': 'localhost',
-
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -181,7 +174,7 @@ EMAIL_USE_TLS = True
 
 # cors
 CORS_ALLOWED_ORIGINS = [
-   'http://localhost:3000',
+   'http://localhost:3000','http://54.252.214.86'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
