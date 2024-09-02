@@ -169,7 +169,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  
 EMAIL_PORT = 587 
 EMAIL_HOST_USER = 'ykrishnanwin112309@gmail.com'  
-EMAIL_HOST_PASSWORD = 'rqxy mmgj zeob kkyt' 
+EMAIL_HOST_PASSWORD = 'lbgk gzbr buls xkay' 
 EMAIL_USE_TLS = True  
 
 # cors
